@@ -110,8 +110,16 @@ pub fn parse_dpkg_status(text: &str) -> HashMap<String, String> {
     installed
 }
 
+/// Klasörün ve içindeki dosyaların en yeni değişme zamanı. rpm'in sqlite veritabanı (Fedora, openSUSE) yerinde
+/// yazılır: paket kurulunca dosyaların zamanı değişir, klasörünki değişmez; yalnız klasöre bakılırsa kurulum görülmez.
+fn newest_in(dir: &Path) -> Option<SystemTime> {
+    let modified = |p: &Path| std::fs::metadata(p).and_then(|m| m.modified()).ok();
+    let files = std::fs::read_dir(dir).into_iter().flatten().flatten().filter_map(|e| modified(&e.path()));
+    modified(dir).into_iter().chain(files).max()
+}
+
 fn rpm_db_modified() -> Option<SystemTime> {
-    RPM_DBS.iter().filter_map(|p| std::fs::metadata(p).and_then(|m| m.modified()).ok()).max()
+    RPM_DBS.iter().filter_map(|p| newest_in(Path::new(p))).max()
 }
 
 /// `rpm -q` sonucu; rpm veritabanı değişmedikçe aynı paket yeniden sorulmaz.
@@ -382,6 +390,26 @@ mod tests {
         assert!(!installed.contains_key("removed"));
         assert_eq!(package_version("1:0.2.0-1").as_deref(), Some("0.2.0"));
         assert_eq!(package_version("2.36-9+deb12u4").as_deref(), Some("2.36"));
+    }
+
+    // rpm'in sqlite veritabanı gibi: dosya yerinde değişir, klasörün zamanı aynı kalır.
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn notices_database_files_changed_in_place() {
+        let dir = std::env::temp_dir().join(format!("robzhub-rpmdb-{}", std::process::id()));
+        std::fs::create_dir_all(&dir).unwrap();
+        let db = dir.join("rpmdb.sqlite");
+        std::fs::write(&db, b"v1").unwrap();
+        let old = SystemTime::UNIX_EPOCH + Duration::from_secs(1_000_000);
+        std::fs::File::options().write(true).open(&db).unwrap().set_modified(old).unwrap();
+        std::fs::File::open(&dir).unwrap().set_modified(old).unwrap();
+        assert_eq!(newest_in(&dir), Some(old));
+
+        std::fs::File::options().write(true).open(&db).unwrap().set_modified(old + Duration::from_secs(60)).unwrap();
+        assert_eq!(std::fs::metadata(&dir).unwrap().modified().unwrap(), old);
+        assert_eq!(newest_in(&dir), Some(old + Duration::from_secs(60)));
+        assert_eq!(newest_in(&dir.join("yok")), None);
+        let _ = std::fs::remove_dir_all(&dir);
     }
 
     #[test]
