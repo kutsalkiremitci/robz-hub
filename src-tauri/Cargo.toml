@@ -1,6 +1,6 @@
 [package]
 name = "robz-hub"
-version = "0.1.8"
+version = "0.1.9"
 description = "Robz açık kaynak uygulamalarını tek yerden indir, güncelle ve başlat."
 authors = ["Robz Hub katkıda bulunanları"]
 license = "MIT"

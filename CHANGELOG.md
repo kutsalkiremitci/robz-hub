@@ -3,6 +3,22 @@
 Her sürümün notları burada `## X.Y.Z` başlığı altında durur; sürüm iş akışı (.github/workflows/release.yml) GitHub
 sürüm notunu bu bölümden alır.
 
+## 0.1.9
+
+<!-- tr -->
+- **Düzeltme: AppImageLauncher kurduğun uygulamayı taşıyordu.** Arch gibi sistemlerde AppImageLauncher kuruluysa, Robz Hub'ın kurduğu bir uygulama ilk açılışta "tümleştir" sorusuyla ~/Applications klasörüne taşınabiliyordu; Robz Hub onu yerinde bulamayınca yeniden "Kur" gösteriyordu. Robz Hub'ın açtığı uygulamalar ve menüye eklediği kısayollar artık AppImageLauncher araya girmeden açılır. Daha önce taşınmış bir uygulamayı Robz Hub'dan yeniden kurman yeterli.
+- **Düzeltme: rpm ile kurulan uygulama kurulumdan sonra bulunamıyordu.** Fedora ve openSUSE gibi rpm kullanan dağıtımlarda kurulum bittiği hâlde "Kur" düğmesi kalıyordu. rpm veritabanındaki değişiklik artık doğru algılanır.
+- İki düzeltme de bberkay'ın katkısı ([#1](https://github.com/kutsalkiremitci/robz-hub/pull/1), [#2](https://github.com/kutsalkiremitci/robz-hub/pull/2)).
+
+<!-- en -->
+<details><summary>English</summary>
+
+- **Fix: AppImageLauncher moved the apps you installed.** On systems such as Arch with AppImageLauncher installed, an app installed by Robz Hub could be moved to ~/Applications by its "integrate" prompt on first launch; Robz Hub then could not find it and showed "Install" again. Apps started by Robz Hub and the menu shortcuts it creates now open without AppImageLauncher stepping in. If an app was already moved, reinstall it from Robz Hub.
+- **Fix: an app installed with rpm was not found after installing.** On rpm-based distributions such as Fedora and openSUSE the "Install" button stayed even though the install had finished. Changes to the rpm database are now detected correctly.
+- Both fixes were contributed by bberkay ([#1](https://github.com/kutsalkiremitci/robz-hub/pull/1), [#2](https://github.com/kutsalkiremitci/robz-hub/pull/2)).
+
+</details>
+
 ## 0.1.8
 
 <!-- tr -->

@@ -1,7 +1,7 @@
 {
   "name": "robz-hub",
   "productName": "Robz Hub",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "private": true,
   "description": "Robz açık kaynak uygulamalarını tek yerden indir, güncelle ve başlat.",
   "license": "MIT",

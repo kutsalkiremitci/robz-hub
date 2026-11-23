@@ -3309,7 +3309,7 @@ dependencies = [
 
 [[package]]
 name = "robz-hub"
-version = "0.1.8"
+version = "0.1.9"
 dependencies = [
  "futures-util",
  "hex",
